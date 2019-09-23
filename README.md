@@ -7,6 +7,7 @@ supports the following formats:
 * Month-Day (e.g. "--12-25")
 * Year-Month (e.g. "2019-04")
 * Week (e.g. "2019-W05")
+* Week-Day (e.g. "2019-W05-3")
 
 ### Basic Usage
 

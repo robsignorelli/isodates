@@ -11,13 +11,13 @@ func ParseYearMonth(input string) (int, time.Month, error) {
 
 	// Must either by "YYYY-MM", "+YYYY-MM", or "-YYYY-MM"
 	if inputLength < 7 || inputLength > 8 {
-		return 0, MonthZero, invalidFormat("[+-]YYYY-MM", input)
+		return 0, ZeroMonth, invalidFormat("[+-]YYYY-MM", input)
 	}
 
 	// Either "+YYYY-MM" or "-YYYY-MM"
 	if inputLength == 8 {
 		if input[5] != '-' {
-			return 0, MonthZero, invalidFormat("[+-]YYYY-MM", input)
+			return 0, ZeroMonth, invalidFormat("[+-]YYYY-MM", input)
 		}
 
 		// For 8-character variant, the first character must be '+' or '-'
@@ -29,14 +29,14 @@ func ParseYearMonth(input string) (int, time.Month, error) {
 			yearText = input[0:5]
 			monthText = input[6:]
 		default:
-			return 0, MonthZero, invalidFormat("[+-]YYYY-MM", input)
+			return 0, ZeroMonth, invalidFormat("[+-]YYYY-MM", input)
 		}
 	}
 
 	// "YYYY-MM" format
 	if inputLength == 7 {
 		if input[4] != '-' {
-			return 0, MonthZero, invalidFormat("YYYY-MM", input)
+			return 0, ZeroMonth, invalidFormat("YYYY-MM", input)
 		}
 		yearText = input[0:4]
 		monthText = input[5:]
@@ -44,11 +44,11 @@ func ParseYearMonth(input string) (int, time.Month, error) {
 
 	year, err := parseYear(yearText)
 	if err != nil {
-		return 0, MonthZero, err
+		return 0, ZeroMonth, err
 	}
 	month, err := parseMonth(monthText)
 	if err != nil {
-		return 0, MonthZero, err
+		return 0, ZeroMonth, err
 	}
 	return year, month, nil
 }

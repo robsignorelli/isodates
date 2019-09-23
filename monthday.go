@@ -29,12 +29,12 @@ func ParseMonthDay(input string) (time.Month, int, error) {
 
 	month, err := parseMonth(monthText)
 	if err != nil {
-		return MonthZero, 0, err
+		return ZeroMonth, 0, err
 	}
 
 	day, err := parseDayOfMonth(dayText)
 	if err != nil {
-		return MonthZero, 0, err
+		return ZeroMonth, 0, err
 	}
 
 	// You have a potential for something like January 32nd which is actually Feb 1st.

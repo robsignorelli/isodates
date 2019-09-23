@@ -7,7 +7,9 @@ import (
 	"time"
 )
 
-const MonthZero = time.Month(0)
+const ZeroMonth = time.Month(0)
+
+var ZeroTime = time.Time{}
 
 func parseYear(input string) (int, error) {
 	year, err := strconv.ParseInt(input, 10, 64)
@@ -20,7 +22,7 @@ func parseYear(input string) (int, error) {
 func parseMonth(input string) (time.Month, error) {
 	month, err := strconv.ParseInt(input, 10, 64)
 	if err != nil || month < 1 || month > 12 {
-		return MonthZero, errors.New("invalid month: " + input)
+		return ZeroMonth, errors.New("invalid month: " + input)
 	}
 	return time.Month(month), nil
 }
@@ -39,6 +41,14 @@ func parseWeek(input string) (int, error) {
 		return 0, errors.New("invalid week number: " + input)
 	}
 	return int(week), nil
+}
+
+func parseWeekOffset(input string) (int, error) {
+	offset, err := strconv.ParseInt(input, 10, 64)
+	if err != nil || offset < 1 || offset > 7 {
+		return 0, errors.New("invalid week offset: " + input)
+	}
+	return int(offset), nil
 }
 
 func invalidFormat(format string, input string) error {
