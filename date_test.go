@@ -81,7 +81,7 @@ func ExampleParseDate() {
 	// Output: Feb 24, 2019
 }
 
-// BenchmarkParseDate typically runs about 140-145ns/op on a 2014 MacBook Pro
+// BenchmarkParseDate typically runs about 70-80ns/op on a 2014 MacBook Pro
 func BenchmarkParseDate(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		_, _ = isodates.ParseDate("2019-02-27")

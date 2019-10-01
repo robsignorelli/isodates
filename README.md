@@ -5,6 +5,7 @@ strings into actual `time.Time{}` instances. Currently, `isodates`
 supports the following formats:
 
 * Date (e.g. "2019-05-23")
+* Date-Time (e.g. "2019-05-23T04:44:33.999Z")
 * Month-Day (e.g. "--12-25")
 * Year-Month (e.g. "2019-04")
 * Week (e.g. "2019-W05")
@@ -16,7 +17,7 @@ Parsing inputs typically gives you the exact date components encoded
 in the string. See "Start/End Dates" for information on how to get
 exact dates in a specific range.
 
-```go
+```
 month, day, err := isodates.ParseMonthDay("--12-25")
 if err != nil {
 	// do something nifty
@@ -33,7 +34,7 @@ Jan 13, 2019. The `isodates` package contains additional functions
 that will fetch exactly midnight on the first day of the range and
 others that will fetch 11:59:59pm on the last day of the range.
 
-```go
+```
 isoWeekString := "2019-W02"
 startDate, err := isodates.ParseWeekStart(isoWeekString)
 if err != nil {
@@ -55,7 +56,7 @@ All of the start/end helpers have a variant ending with `In` that also
 takes a `*time.Location`. In these cases, the resulting date/time will
 be either midnight or 11:59:59pm in the specified time zone.
 
-```go
+```
 edt, _ := time.LoadLocation("America/New_York") 
 isoWeekString := "2019-W02"
 startDate, err := isodates.ParseWeekStartIn(isoWeekString, edt)
