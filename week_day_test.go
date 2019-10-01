@@ -107,7 +107,7 @@ func ExampleParseWeekDay() {
 	// Output: Jan 8, 2019
 }
 
-// BenchmarkParseWeekDay typically runs about 35-40ns/op on a 2014 MacBook Pro
+// BenchmarkParseWeekDay typically runs about 170-185ns/op on a 2014 MacBook Pro
 func BenchmarkParseWeekDay(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		_, _ = isodates.ParseWeekDay("2019-W04-3")

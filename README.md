@@ -4,6 +4,7 @@ The package `isodates` helps you convert ISO 8601 formatted date
 strings into actual `time.Time{}` instances. Currently, `isodates`
 supports the following formats:
 
+* Date (e.g. "2019-05-23")
 * Month-Day (e.g. "--12-25")
 * Year-Month (e.g. "2019-04")
 * Week (e.g. "2019-W05")
