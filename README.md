@@ -1,5 +1,7 @@
 # isodates
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/robsignorelli/isodates)](https://goreportcard.com/report/github.com/robsignorelli/isodates)
+
 The package `isodates` helps you convert ISO 8601 formatted date
 strings into actual `time.Time{}` instances. Currently, `isodates`
 supports the following formats:
