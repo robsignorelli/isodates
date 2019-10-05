@@ -10,6 +10,11 @@ endif
 #
 test:
 	go test $(TESTING_FLAGS) -timeout 5s $(PACKAGE)/...
+#
+# Runs through our suite of all unit tests
+#
+coverage:
+	go test $(TESTING_FLAGS) -cover -timeout 5s $(PACKAGE)/...
 
 benchmark:
 	go test -bench=.

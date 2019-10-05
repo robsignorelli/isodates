@@ -47,7 +47,7 @@ func ParseWeekStart(input string) (time.Time, error) {
 // local time of the specified location.
 func ParseWeekStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
-		return ZeroTime, errors.New("parse week: nil location")
+		return ZeroTime, errors.New("parse week start: nil location")
 	}
 	isoYear, isoWeek, err := ParseWeek(input)
 	if err != nil {
@@ -55,7 +55,7 @@ func ParseWeekStartIn(input string, loc *time.Location) (time.Time, error) {
 	}
 
 	year, month, day := isoweek.StartDate(isoYear, isoWeek)
-	return time.Date(year, month, day, 0, 0, 0, 0, loc), nil
+	return Midnight(year, month, day, loc), nil
 }
 
 // ParseWeekStart returns 11:59:59pm (one nanosecond before midnight) on Sunday of the specified ISO week
@@ -69,7 +69,7 @@ func ParseWeekEnd(input string) (time.Time, error) {
 // string. This will be in the local time of the specified location.
 func ParseWeekEndIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
-		return time.Time{}, errors.New("parse week: nil location")
+		return ZeroTime, errors.New("parse week end: nil location")
 	}
 	isoYear, isoWeek, err := ParseWeek(input)
 	if err != nil {
@@ -77,5 +77,5 @@ func ParseWeekEndIn(input string, loc *time.Location) (time.Time, error) {
 	}
 
 	year, month, day := isoweek.StartDate(isoYear, isoWeek)
-	return time.Date(year, month, day+6, 23, 59, 59, 999999999, loc), nil
+	return AlmostMidnight(year, month, day+6, loc), nil
 }

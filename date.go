@@ -45,13 +45,13 @@ func ParseDateStart(input string) (time.Time, error) {
 // given date set to exactly midnight in the specified location.
 func ParseDateStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
-		return time.Time{}, errors.New("parse date start: nil location")
+		return ZeroTime, errors.New("parse date start: nil location")
 	}
 	date, err := ParseDate(input)
 	if err != nil {
 		return ZeroTime, err
 	}
-	return time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, loc), nil
+	return Midnight(date.Year(), date.Month(), date.Day(), loc), nil
 }
 
 // ParseDate accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
@@ -64,11 +64,11 @@ func ParseDateEnd(input string) (time.Time, error) {
 // given date set to the last nanosecond of 11:59pm in the specified location.
 func ParseDateEndIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
-		return time.Time{}, errors.New("parse date end: nil location")
+		return ZeroTime, errors.New("parse date end: nil location")
 	}
 	date, err := ParseDate(input)
 	if err != nil {
 		return ZeroTime, err
 	}
-	return time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 999999999, loc), nil
+	return AlmostMidnight(date.Year(), date.Month(), date.Day(), loc), nil
 }

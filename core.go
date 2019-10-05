@@ -13,6 +13,14 @@ const ZeroMonth = time.Month(0)
 // Our 'no value' time that we return when the operation fails.
 var ZeroTime = time.Time{}
 
+func Midnight(year int, month time.Month, day int, loc *time.Location) time.Time {
+	return time.Date(year, month, day, 0, 0, 0, 0, loc)
+}
+
+func AlmostMidnight(year int, month time.Month, day int, loc *time.Location) time.Time {
+	return time.Date(year, month, day, 23, 59, 59, 999999999, loc)
+}
+
 func parseYear(input string) (int, error) {
 	year, err := strconv.ParseInt(input, 10, 64)
 	if err != nil {

@@ -97,6 +97,7 @@ func (suite *DateSuite) TestParseDateStartIn() {
 	// TestParseDate runs through all formats, so just make sure failure bubbles up.
 	fails("", locationEDT)
 	fails("not valid", locationPDT)
+	fails("2000-01-01", nil)
 
 	succeeds("0123-01-01", 123, time.January, 1, time.UTC)
 	succeeds("0123-01-01", 123, time.January, 1, locationEDT)
@@ -153,6 +154,7 @@ func (suite *DateSuite) TestParseDateEndIn() {
 	// TestParseDate runs through all formats, so just make sure failure bubbles up.
 	fails("", locationEDT)
 	fails("not valid", locationPDT)
+	fails("2000-01-01", nil)
 
 	succeeds("0123-01-01", 123, time.January, 1, time.UTC)
 	succeeds("0123-01-01", 123, time.January, 1, locationEDT)
