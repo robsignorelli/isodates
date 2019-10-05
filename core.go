@@ -10,7 +10,7 @@ import (
 // ZeroMonth is our 'no value' month that we return when the operation fails.
 const ZeroMonth = time.Month(0)
 
-// ZeroMonth is our 'no value' time that we return when the operation fails.
+// ZeroTime is our 'no value' time that we return when the operation fails.
 var ZeroTime = time.Time{}
 
 // Midnight creates a date/time instance in the given time zone that is exactly midnight
