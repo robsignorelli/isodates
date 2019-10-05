@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// ParseYearMonth accepts an ISO string such as "2019-04" and returns the individual date
+// components for the year and month (e.g. 2019 and time.April). We also support the variant
+// where you can prefix the year with either "+" or "-".
 func ParseYearMonth(input string) (int, time.Month, error) {
 	inputLength := len(input)
 	yearText := ""
@@ -60,7 +63,7 @@ func ParseYearMonthStart(input string) (time.Time, error) {
 	return ParseYearMonthStartIn(input, time.UTC)
 }
 
-// ParseYearMonthStart returns the first day of the year/month for the parsed input. The
+// ParseYearMonthStartIn returns the first day of the year/month for the parsed input. The
 // resulting date will be at midnight in the specified time zone.
 func ParseYearMonthStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {

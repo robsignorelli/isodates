@@ -35,13 +35,13 @@ func ParseDate(input string) (time.Time, error) {
 	return time.Date(year, month, day, 0, 0, 0, 0, time.UTC), nil
 }
 
-// ParseDate accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
+// ParseDateStart accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
 // given date set to exactly midnight in UTC.
 func ParseDateStart(input string) (time.Time, error) {
 	return ParseDateStartIn(input, time.UTC)
 }
 
-// ParseDate accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
+// ParseDateStartIn accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
 // given date set to exactly midnight in the specified location.
 func ParseDateStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
@@ -54,13 +54,13 @@ func ParseDateStartIn(input string, loc *time.Location) (time.Time, error) {
 	return Midnight(date.Year(), date.Month(), date.Day(), loc), nil
 }
 
-// ParseDate accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
+// ParseDateEnd accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
 // given date set to the last nanosecond of 11:59pm in UTC.
 func ParseDateEnd(input string) (time.Time, error) {
 	return ParseDateEndIn(input, time.UTC)
 }
 
-// ParseDate accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
+// ParseDateEndIn accepts an ISO-formatted year-month-day string (e.g. "2019-05-22") and returns the
 // given date set to the last nanosecond of 11:59pm in the specified location.
 func ParseDateEndIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {

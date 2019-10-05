@@ -43,7 +43,7 @@ func ParseWeekStart(input string) (time.Time, error) {
 	return ParseWeekStartIn(input, time.UTC)
 }
 
-// ParseWeekEndIn returns midnight on Monday of the specified ISO week string. This will be in the
+// ParseWeekStartIn returns midnight on Monday of the specified ISO week string. This will be in the
 // local time of the specified location.
 func ParseWeekStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
@@ -58,7 +58,7 @@ func ParseWeekStartIn(input string, loc *time.Location) (time.Time, error) {
 	return Midnight(year, month, day, loc), nil
 }
 
-// ParseWeekStart returns 11:59:59pm (one nanosecond before midnight) on Sunday of the specified ISO week
+// ParseWeekEnd returns 11:59:59pm (one nanosecond before midnight) on Sunday of the specified ISO week
 // string. The resulting date/time will be in UTC. If you would like this to be almost-midnight of some local
 // time, use ParseWeekEndIn.
 func ParseWeekEnd(input string) (time.Time, error) {

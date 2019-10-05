@@ -36,8 +36,8 @@ func ParseWeekDayStart(input string) (time.Time, error) {
 	return weekStart.AddDate(0, 0, offset-1), nil
 }
 
-// ParseWeekDayStart accepts an ISO-formatted year/week/day string (e.g. "2019-W04-3") and returns the
-// exact date that it represents. The resulting date/time will be at midnight in UTC.
+// ParseWeekDayStartIn accepts an ISO-formatted year/week/day string (e.g. "2019-W04-3") and returns the
+// exact date that it represents. The resulting date/time will be at midnight in the given time zone.
 func ParseWeekDayStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
 		return ZeroTime, errors.New("parse week day start: nil location")

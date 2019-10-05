@@ -64,13 +64,13 @@ func ParseMonthDayStartIn(input string, year int, loc *time.Location) (time.Time
 	return Midnight(year, month, day, loc), nil
 }
 
-// ParseMonthDayStart parses the month/day string (e.g. "--12-24") and returns a date/time at
+// ParseMonthDayEnd parses the month/day string (e.g. "--12-24") and returns a date/time at
 // 11:59:59pm in the specified year. The resulting timestamp will be in UTC.
 func ParseMonthDayEnd(input string, year int) (time.Time, error) {
 	return ParseMonthDayEndIn(input, year, time.UTC)
 }
 
-// ParseMonthDayStartIn parses the month/day string (e.g. "--12-24") and returns a date/time at
+// ParseMonthDayEndIn parses the month/day string (e.g. "--12-24") and returns a date/time at
 // 11:59:59pm in the specified year. The resulting timestamp will be in the specified time zone.
 func ParseMonthDayEndIn(input string, year int, loc *time.Location) (time.Time, error) {
 	if loc == nil {

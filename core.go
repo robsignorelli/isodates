@@ -7,16 +7,20 @@ import (
 	"time"
 )
 
-// Our 'no value' month that we return when the operation fails.
+// ZeroMonth is our 'no value' month that we return when the operation fails.
 const ZeroMonth = time.Month(0)
 
-// Our 'no value' time that we return when the operation fails.
+// ZeroMonth is our 'no value' time that we return when the operation fails.
 var ZeroTime = time.Time{}
 
+// Midnight creates a date/time instance in the given time zone that is exactly midnight
+// on the specified date.
 func Midnight(year int, month time.Month, day int, loc *time.Location) time.Time {
 	return time.Date(year, month, day, 0, 0, 0, 0, loc)
 }
 
+// AlmostMidnight creates a date/time instance in the given time zone that is exactly
+// 11:59:59pm on the specified date.
 func AlmostMidnight(year int, month time.Month, day int, loc *time.Location) time.Time {
 	return time.Date(year, month, day, 23, 59, 59, 999999999, loc)
 }
