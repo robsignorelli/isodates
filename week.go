@@ -47,11 +47,11 @@ func ParseWeekStart(input string) (time.Time, error) {
 // local time of the specified location.
 func ParseWeekStartIn(input string, loc *time.Location) (time.Time, error) {
 	if loc == nil {
-		return time.Time{}, errors.New("parse week: nil location")
+		return ZeroTime, errors.New("parse week: nil location")
 	}
 	isoYear, isoWeek, err := ParseWeek(input)
 	if err != nil {
-		return time.Time{}, err
+		return ZeroTime, err
 	}
 
 	year, month, day := isoweek.StartDate(isoYear, isoWeek)
@@ -73,9 +73,9 @@ func ParseWeekEndIn(input string, loc *time.Location) (time.Time, error) {
 	}
 	isoYear, isoWeek, err := ParseWeek(input)
 	if err != nil {
-		return time.Time{}, err
+		return ZeroTime, err
 	}
 
 	year, month, day := isoweek.StartDate(isoYear, isoWeek)
-	return time.Date(year, month, day + 6, 23, 59, 59, 999999999, loc), nil
+	return time.Date(year, month, day+6, 23, 59, 59, 999999999, loc), nil
 }

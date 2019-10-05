@@ -14,7 +14,7 @@ func TestDateTimeSuite(t *testing.T) {
 }
 
 type DateTimeSuite struct {
-	suite.Suite
+	ChronoSuite
 }
 
 func (suite *DateTimeSuite) TestParseDateTime() {
@@ -24,14 +24,7 @@ func (suite *DateTimeSuite) TestParseDateTime() {
 	}
 	succeeds := func(input string, year int, month time.Month, day, hour, minute, second, nanos, offset int) {
 		date, err := isodates.ParseDateTime(input)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(hour, date.Hour()) &&
-			suite.Equal(minute, date.Minute()) &&
-			suite.Equal(second, date.Second()) &&
-			suite.Equal(nanos, date.Nanosecond()) &&
+		_ = suite.AssertTime(date, err, year, month, day, hour, minute, second, nanos) &&
 			suite.Equal(offset, zoneOffset(date))
 	}
 	fails := func(input string) {

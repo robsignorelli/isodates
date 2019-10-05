@@ -14,21 +14,13 @@ func TestDateSuite(t *testing.T) {
 }
 
 type DateSuite struct {
-	suite.Suite
+	ChronoSuite
 }
 
-func (suite *DateSuite) TestParseDate() {
+func (suite DateSuite) TestParseDate() {
 	succeeds := func(input string, year int, month time.Month, day int) {
 		date, err := isodates.ParseDate(input)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(0, date.Hour()) &&
-			suite.Equal(0, date.Minute()) &&
-			suite.Equal(0, date.Second()) &&
-			suite.Equal(0, date.Nanosecond()) &&
-			suite.Equal(time.UTC, date.Location())
+		suite.AssertMidnightUTC(date, err, year, month, day)
 	}
 	fails := func(input string) {
 		_, err := isodates.ParseDate(input)
@@ -69,6 +61,118 @@ func (suite *DateSuite) TestParseDate() {
 	// Roll over to next month
 	succeeds("2005-02-29", 2005, time.March, 1)
 	succeeds("2005-01-33", 2005, time.February, 2)
+}
+
+func (suite *DateSuite) TestParseDateStart() {
+	succeeds := func(input string, year int, month time.Month, day int) {
+		date, err := isodates.ParseDateStart(input)
+		suite.AssertMidnightUTC(date, err, year, month, day)
+	}
+	fails := func(input string) {
+		_, err := isodates.ParseDateStart(input)
+		suite.Error(err)
+	}
+
+	// TestParseDate runs through all formats, so just make sure failure bubbles up.
+	fails("")
+	fails("not valid")
+
+	succeeds("0123-01-01", 123, time.January, 1)
+	succeeds("2000-01-01", 2000, time.January, 1)
+	succeeds("2000-02-29", 2000, time.February, 29)
+	succeeds("2004-02-29", 2004, time.February, 29)
+	succeeds("2319-12-31", 2319, time.December, 31)
+}
+
+func (suite *DateSuite) TestParseDateStartIn() {
+	succeeds := func(input string, year int, month time.Month, day int, loc *time.Location) {
+		date, err := isodates.ParseDateStartIn(input, loc)
+		suite.AssertMidnightIn(date, err, year, month, day, loc)
+	}
+	fails := func(input string, loc *time.Location) {
+		_, err := isodates.ParseDateStartIn(input, loc)
+		suite.Error(err)
+	}
+
+	// TestParseDate runs through all formats, so just make sure failure bubbles up.
+	fails("", locationEDT)
+	fails("not valid", locationPDT)
+
+	succeeds("0123-01-01", 123, time.January, 1, time.UTC)
+	succeeds("0123-01-01", 123, time.January, 1, locationEDT)
+	succeeds("0123-01-01", 123, time.January, 1, locationPDT)
+
+	succeeds("2000-01-01", 2000, time.January, 1, time.UTC)
+	succeeds("2000-01-01", 2000, time.January, 1, locationEDT)
+	succeeds("2000-01-01", 2000, time.January, 1, locationPDT)
+
+	succeeds("2000-02-29", 2000, time.February, 29, time.UTC)
+	succeeds("2000-02-29", 2000, time.February, 29, locationEDT)
+	succeeds("2000-02-29", 2000, time.February, 29, locationPDT)
+
+	succeeds("2004-02-29", 2004, time.February, 29, time.UTC)
+	succeeds("2004-02-29", 2004, time.February, 29, locationEDT)
+	succeeds("2004-02-29", 2004, time.February, 29, locationPDT)
+
+	succeeds("2319-12-31", 2319, time.December, 31, time.UTC)
+	succeeds("2319-12-31", 2319, time.December, 31, locationEDT)
+	succeeds("2319-12-31", 2319, time.December, 31, locationPDT)
+}
+
+func (suite *DateSuite) TestParseDateEnd() {
+	succeeds := func(input string, year int, month time.Month, day int) {
+		date, err := isodates.ParseDateEnd(input)
+		suite.AssertAlmostMidnightUTC(date, err, year, month, day)
+	}
+	fails := func(input string) {
+		_, err := isodates.ParseDateEnd(input)
+		suite.Error(err)
+	}
+
+	// TestParseDate runs through all formats, so just make sure failure bubbles up.
+	fails("")
+	fails("not valid")
+
+	succeeds("0123-01-01", 123, time.January, 1)
+	succeeds("2000-01-01", 2000, time.January, 1)
+	succeeds("2000-02-29", 2000, time.February, 29)
+	succeeds("2004-02-29", 2004, time.February, 29)
+	succeeds("2319-12-31", 2319, time.December, 31)
+}
+
+func (suite *DateSuite) TestParseDateEndIn() {
+	succeeds := func(input string, year int, month time.Month, day int, loc *time.Location) {
+		date, err := isodates.ParseDateEndIn(input, loc)
+		suite.AssertAlmostMidnightIn(date, err, year, month, day, loc)
+	}
+	fails := func(input string, loc *time.Location) {
+		_, err := isodates.ParseDateEndIn(input, loc)
+		suite.Error(err)
+	}
+
+	// TestParseDate runs through all formats, so just make sure failure bubbles up.
+	fails("", locationEDT)
+	fails("not valid", locationPDT)
+
+	succeeds("0123-01-01", 123, time.January, 1, time.UTC)
+	succeeds("0123-01-01", 123, time.January, 1, locationEDT)
+	succeeds("0123-01-01", 123, time.January, 1, locationPDT)
+
+	succeeds("2000-01-01", 2000, time.January, 1, time.UTC)
+	succeeds("2000-01-01", 2000, time.January, 1, locationEDT)
+	succeeds("2000-01-01", 2000, time.January, 1, locationPDT)
+
+	succeeds("2000-02-29", 2000, time.February, 29, time.UTC)
+	succeeds("2000-02-29", 2000, time.February, 29, locationEDT)
+	succeeds("2000-02-29", 2000, time.February, 29, locationPDT)
+
+	succeeds("2004-02-29", 2004, time.February, 29, time.UTC)
+	succeeds("2004-02-29", 2004, time.February, 29, locationEDT)
+	succeeds("2004-02-29", 2004, time.February, 29, locationPDT)
+
+	succeeds("2319-12-31", 2319, time.December, 31, time.UTC)
+	succeeds("2319-12-31", 2319, time.December, 31, locationEDT)
+	succeeds("2319-12-31", 2319, time.December, 31, locationPDT)
 }
 
 func ExampleParseDate() {

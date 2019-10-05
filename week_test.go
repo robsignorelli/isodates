@@ -14,14 +14,11 @@ func TestWeekSuite(t *testing.T) {
 }
 
 type WeekSuite struct {
-	suite.Suite
-	edt *time.Location
-	pdt *time.Location
+	ChronoSuite
 }
 
 func (suite *WeekSuite) SetupSuite() {
-	suite.edt, _ = time.LoadLocation("America/New_York")
-	suite.pdt, _ = time.LoadLocation("America/Los_Angeles")
+	locationPDT, _ = time.LoadLocation("America/Los_Angeles")
 }
 
 func (suite *WeekSuite) TestParseWeek() {
@@ -70,15 +67,7 @@ func (suite *WeekSuite) TestParseWeek() {
 func (suite *WeekSuite) TestParseWeekStart() {
 	succeeds := func(input string, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekStart(input)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(0, date.Hour()) &&
-			suite.Equal(0, date.Minute()) &&
-			suite.Equal(0, date.Second()) &&
-			suite.Equal(0, date.Nanosecond()) &&
-			suite.Equal(time.UTC, date.Location())
+		suite.AssertMidnightUTC(date, err, year, month, day)
 	}
 	fails := func(input string) {
 		_, err := isodates.ParseWeekStart(input)
@@ -103,15 +92,7 @@ func (suite *WeekSuite) TestParseWeekStart() {
 func (suite *WeekSuite) TestParseWeekStartIn() {
 	succeeds := func(input string, loc *time.Location, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekStartIn(input, loc)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(0, date.Hour()) &&
-			suite.Equal(0, date.Minute()) &&
-			suite.Equal(0, date.Second()) &&
-			suite.Equal(0, date.Nanosecond()) &&
-			suite.Equal(loc, date.Location())
+		suite.AssertMidnightIn(date, err, year, month, day, loc)
 	}
 	fails := func(input string, loc *time.Location) {
 		_, err := isodates.ParseWeekStartIn(input, loc)
@@ -119,42 +100,34 @@ func (suite *WeekSuite) TestParseWeekStartIn() {
 	}
 
 	// TestParseWeek should handle all of the variants of bad input, so make sure we propagate something.
-	fails("", suite.edt)
-	fails("not valid", suite.edt)
-	fails("W01-2019", suite.edt)
-	fails("2019-WJ4", suite.edt)
+	fails("", locationEDT)
+	fails("not valid", locationEDT)
+	fails("W01-2019", locationEDT)
+	fails("2019-WJ4", locationEDT)
 	fails("2019-W04", nil)
 
-	succeeds("2019-W01", suite.edt, 2018, time.December, 31)
-	succeeds("2019-W02", suite.edt, 2019, time.January, 7)
-	succeeds("2000-W01", suite.edt, 2000, time.January, 3)
-	succeeds("1999-W52", suite.edt, 1999, time.December, 27)
-	succeeds("2000-W09", suite.edt, 2000, time.February, 28)
-	succeeds("1999-W53", suite.edt, 2000, time.January, 3)   // 53rd week rolls to next year
-	succeeds("2004-W53", suite.edt, 2004, time.December, 27) // long year where still in that year
+	succeeds("2019-W01", locationEDT, 2018, time.December, 31)
+	succeeds("2019-W02", locationEDT, 2019, time.January, 7)
+	succeeds("2000-W01", locationEDT, 2000, time.January, 3)
+	succeeds("1999-W52", locationEDT, 1999, time.December, 27)
+	succeeds("2000-W09", locationEDT, 2000, time.February, 28)
+	succeeds("1999-W53", locationEDT, 2000, time.January, 3)   // 53rd week rolls to next year
+	succeeds("2004-W53", locationEDT, 2004, time.December, 27) // long year where still in that year
 
 	// Make sure everything still works when given a different time zone.
-	succeeds("2019-W01", suite.pdt, 2018, time.December, 31)
-	succeeds("2019-W02", suite.pdt, 2019, time.January, 7)
-	succeeds("2000-W01", suite.pdt, 2000, time.January, 3)
-	succeeds("1999-W52", suite.pdt, 1999, time.December, 27)
-	succeeds("2000-W09", suite.pdt, 2000, time.February, 28)
-	succeeds("1999-W53", suite.pdt, 2000, time.January, 3)
-	succeeds("2004-W53", suite.pdt, 2004, time.December, 27)
+	succeeds("2019-W01", locationPDT, 2018, time.December, 31)
+	succeeds("2019-W02", locationPDT, 2019, time.January, 7)
+	succeeds("2000-W01", locationPDT, 2000, time.January, 3)
+	succeeds("1999-W52", locationPDT, 1999, time.December, 27)
+	succeeds("2000-W09", locationPDT, 2000, time.February, 28)
+	succeeds("1999-W53", locationPDT, 2000, time.January, 3)
+	succeeds("2004-W53", locationPDT, 2004, time.December, 27)
 }
 
 func (suite *WeekSuite) TestParseWeekEnd() {
 	succeeds := func(input string, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekEnd(input)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(23, date.Hour()) &&
-			suite.Equal(59, date.Minute()) &&
-			suite.Equal(59, date.Second()) &&
-			suite.Equal(999999999, date.Nanosecond()) &&
-			suite.Equal(time.UTC, date.Location())
+		suite.AssertAlmostMidnightUTC(date, err, year, month, day)
 	}
 	fails := func(input string) {
 		_, err := isodates.ParseWeekEnd(input)
@@ -179,15 +152,7 @@ func (suite *WeekSuite) TestParseWeekEnd() {
 func (suite *WeekSuite) TestParseWeekEndIn() {
 	succeeds := func(input string, loc *time.Location, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekEndIn(input, loc)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(23, date.Hour()) &&
-			suite.Equal(59, date.Minute()) &&
-			suite.Equal(59, date.Second()) &&
-			suite.Equal(999999999, date.Nanosecond()) &&
-			suite.Equal(loc, date.Location())
+		suite.AssertAlmostMidnightIn(date, err, year, month, day, loc)
 	}
 	fails := func(input string, loc *time.Location) {
 		_, err := isodates.ParseWeekEndIn(input, loc)
@@ -195,28 +160,28 @@ func (suite *WeekSuite) TestParseWeekEndIn() {
 	}
 
 	// TestParseWeek should handle all of the variants of bad input, so make sure we propagate some.
-	fails("", suite.edt)
-	fails("not valid", suite.edt)
-	fails("W01-2019", suite.edt)
-	fails("2019-WJ4", suite.edt)
+	fails("", locationEDT)
+	fails("not valid", locationEDT)
+	fails("W01-2019", locationEDT)
+	fails("2019-WJ4", locationEDT)
 	fails("2019-W04", nil)
 
-	succeeds("2019-W01", suite.edt, 2019, time.January, 6)
-	succeeds("2019-W02", suite.edt, 2019, time.January, 13)
-	succeeds("2000-W01", suite.edt, 2000, time.January, 9)
-	succeeds("1999-W52", suite.edt, 2000, time.January, 2)
-	succeeds("2000-W09", suite.edt, 2000, time.March, 5)
-	succeeds("1999-W53", suite.edt, 2000, time.January, 9) // 53rd week rolls to next year
-	succeeds("2004-W53", suite.edt, 2005, time.January, 2) // long year where still in that year
+	succeeds("2019-W01", locationEDT, 2019, time.January, 6)
+	succeeds("2019-W02", locationEDT, 2019, time.January, 13)
+	succeeds("2000-W01", locationEDT, 2000, time.January, 9)
+	succeeds("1999-W52", locationEDT, 2000, time.January, 2)
+	succeeds("2000-W09", locationEDT, 2000, time.March, 5)
+	succeeds("1999-W53", locationEDT, 2000, time.January, 9) // 53rd week rolls to next year
+	succeeds("2004-W53", locationEDT, 2005, time.January, 2) // long year where still in that year
 
 	// Make sure everything still works when given a different time zone.
-	succeeds("2019-W01", suite.pdt, 2019, time.January, 6)
-	succeeds("2019-W02", suite.pdt, 2019, time.January, 13)
-	succeeds("2000-W01", suite.pdt, 2000, time.January, 9)
-	succeeds("1999-W52", suite.pdt, 2000, time.January, 2)
-	succeeds("2000-W09", suite.pdt, 2000, time.March, 5)
-	succeeds("1999-W53", suite.pdt, 2000, time.January, 9) // 53rd week rolls to next year
-	succeeds("2004-W53", suite.pdt, 2005, time.January, 2) // long year where still in that year
+	succeeds("2019-W01", locationPDT, 2019, time.January, 6)
+	succeeds("2019-W02", locationPDT, 2019, time.January, 13)
+	succeeds("2000-W01", locationPDT, 2000, time.January, 9)
+	succeeds("1999-W52", locationPDT, 2000, time.January, 2)
+	succeeds("2000-W09", locationPDT, 2000, time.March, 5)
+	succeeds("1999-W53", locationPDT, 2000, time.January, 9) // 53rd week rolls to next year
+	succeeds("2004-W53", locationPDT, 2005, time.January, 2) // long year where still in that year
 }
 
 func ExampleParseWeek() {

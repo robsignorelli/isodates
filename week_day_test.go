@@ -14,21 +14,13 @@ func TestWeekDaySuite(t *testing.T) {
 }
 
 type WeekDaySuite struct {
-	suite.Suite
+	ChronoSuite
 }
 
 func (suite *WeekDaySuite) TestParseWeekDay() {
 	succeeds := func(input string, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekDay(input)
-		_ = suite.NoError(err) &&
-			suite.Equal(year, date.Year()) &&
-			suite.Equal(month, date.Month()) &&
-			suite.Equal(day, date.Day()) &&
-			suite.Equal(0, date.Hour()) &&
-			suite.Equal(0, date.Minute()) &&
-			suite.Equal(0, date.Second()) &&
-			suite.Equal(0, date.Nanosecond()) &&
-			suite.Equal(time.UTC, date.Location())
+		suite.AssertMidnightUTC(date, err, year, month, day)
 	}
 	fails := func(input string) {
 		_, err := isodates.ParseWeekDay(input)

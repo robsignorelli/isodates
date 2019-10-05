@@ -7,8 +7,10 @@ import (
 	"time"
 )
 
+// Our 'no value' month that we return when the operation fails.
 const ZeroMonth = time.Month(0)
 
+// Our 'no value' time that we return when the operation fails.
 var ZeroTime = time.Time{}
 
 func parseYear(input string) (int, error) {
