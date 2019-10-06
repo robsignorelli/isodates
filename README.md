@@ -15,64 +15,76 @@ supports the following formats:
 
 ### Basic Usage
 
-Parsing inputs typically gives you the exact date components encoded
-in the string. See "Start/End Dates" for information on how to get
-exact dates in a specific range.
+For starters, import `isodates` into your code:
 
 ```
+import "github.com/robsignorelli/isodates"
+```
+
+Parsing inputs gives you the exact date components encoded
+in the string. These can usually be fed directly to `time.Date()` with
+the exception of week parsing. See the section on "Start/End Dates" to
+see how you can obtain a `time.Time` at the very first or last nanosecond
+of the parsed date/range in one step.
+
+```
+// Simple dates
+year, month, day, err := isodates.ParseDate("2019-04-01")
+
+// Month/day values
 month, day, err := isodates.ParseMonthDay("--12-25")
-if err != nil {
-	// do something nifty
-}
-christmas2019 := time.Date(2019, month, day, 0, 0, 0, 0, time.UTC)
+
+// Year/month values
+year, month, err := isodates.ParseYearMonth("2019-12")
+
+// ISO Week numbers
+year, week, err := isodates.ParseWeek("2019-W11")
+
+// ISO Week numbers w/ day offset
+year, week, day, err := isodates.ParseWeek("2019-W11-3")
+
+// Date/time timestamps (already a time.Time)
+dateTime, err := isodates.ParseDateTime("2019-03-04T16:04:44.45678Z")
 ```
 
 ### Start/End Dates
 
-Some of the formats that `isodates` supports actually represent
-ranges of date rather than a single date. For instance, the ISO
-week "2019-W02" represents the entire range of Jan 7, 2019 to
-Jan 13, 2019. The `isodates` package contains additional functions
-that will fetch exactly midnight on the first day of the range and
-others that will fetch 11:59:59pm on the last day of the range.
+Standard `isodates` parser functions just give you the raw components encoded
+in the input string. Normally you need to feed those to `time.Date(...)` manually.
+Most of the `ParseXyz()` functions, however, have a `ParseXyzStart()` and a `ParseXyzEnd()`
+variant that will return a fully-constructed `time.Time` representing
+the first and last nanosecond of the parsed range, respectively. These ranges
+are in UTC. If you need local times, see the next section.
+
+These are a convenience so that you can easily build date/time ranges that
+encapsulate the entire block of time represented by the input. 
 
 ```
-isoWeekString := "2019-W02"
-startDate, err := isodates.ParseWeekStart(isoWeekString)
-if err != nil {
-	// Handle error
-}
-endDate, err := isodates.ParseWeekEnd(isoWeekString)
-if err != nil {
-	// Handle error
-}
+// Jan 6, 2019 12:00:00AM - Jan 12, 2019 11:59:59PM
+weekStart, err := isodates.ParseWeekStart("2019-W02")
+weekEnd, err := isodates.ParseWeekEnd("2019-W02")
 
-// Outputs: "Start=Jan 7, 2019 End=Jan 13, 2019"
-format := "Jan 02, 2006"
-fmt.Printf("Start=%s, End=%s", startDate.Format(format), endDate.Format(format))
+// Feb 1, 2000 12:00:00AM - Feb 29, 2000 11:59:59PM
+febStart, err := isodates.ParseYearMonthStart("2000-02")
+febEnd, err := isodates.ParseYearMonthEnd("2000-02")
 ```
 
 ### Start/End Dates (Local Time)
 
-All of the start/end helpers have a variant ending with `In` that also
+All of the Start/End helpers have a variant ending with `In` that also
 takes a `*time.Location`. In these cases, the resulting date/time will
 be either midnight or 11:59:59pm in the specified time zone.
 
 ```
-edt, _ := time.LoadLocation("America/New_York") 
-isoWeekString := "2019-W02"
-startDate, err := isodates.ParseWeekStartIn(isoWeekString, edt)
-if err != nil {
-	// Handle error
-}
-endDate, err := isodates.ParseWeekEndIn(isoWeekString, edt)
-if err != nil {
-	// Handle error
-}
+ny, _ := time.LoadLocation("America/New_York")
 
-// Outputs: "Start=Jan 7, 2019 End=Jan 13, 2019"
-format := "Jan 02, 2006"
-fmt.Printf("Start=%s, End=%s", startDate.Format(format), endDate.Format(format))
+// Jan 6, 2019 12:00:00AM - Jan 12, 2019 11:59:59PM
+weekStartNY, err := isodates.ParseWeekStartIn("2019-W02", ny)
+weekEndNY, err := isodates.ParseWeekEndIn("2019-W02", ny)
+
+// Feb 1, 2000 12:00:00AM - Feb 29, 2000 11:59:59PM
+febStartNY, err := isodates.ParseYearMonthStartIn("2000-02", ny)
+febEndNY, err := isodates.ParseYearMonthEndIn("2000-02", ny)
 ```
 
 ### Motivation
@@ -83,4 +95,4 @@ Alexa skills in Go/Lambda. When a user utters "what should I wear next week"
 the Alexa skills API will feed an ISO week string representing the range of
 next week. `isodates` tries to support all of the various date strings that
 will get thrown at you. The start/end helpers will make it easier for your
-to build dates ranges from the raw slot data you received.
+to build date ranges from the raw slot data you received.

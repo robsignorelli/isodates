@@ -17,6 +17,81 @@ type WeekDaySuite struct {
 	ChronoSuite
 }
 
+func (suite *WeekDaySuite) TestParseWeekDay() {
+	succeeds := func(input string, year, week, day int) {
+		actualYear, actualWeek, actualDay, err := isodates.ParseWeekDay(input)
+		_ = suite.NoError(err) &&
+			suite.Equal(year, actualYear) &&
+			suite.Equal(week, actualWeek) &&
+			suite.Equal(day, actualDay)
+	}
+	fails := func(input string) {
+		_, err := isodates.ParseWeekDayStart(input)
+		suite.Error(err)
+	}
+	fails("")
+	fails("not valid")
+	fails("------")
+	fails("W01-2019-1")
+	fails("2019/W01/2")
+	fails("1234-W04-")
+
+	// Invalid years
+	fails("$G33-W04-3")
+	fails("-W04-3")
+
+	// Invalid weeks
+	fails("2019-W-1")
+	fails("2019-W73-1")
+	fails("2019-W00-3")
+	fails("2019-WJ4-4")
+
+	// Invalid offsets
+	fails("2019-W04-9")
+	fails("2019-W73-X")
+	fails("2019-W00-0")
+	fails("2019-WJ4-44")
+
+	// Missing zero padding
+	fails("123-W04-1")
+	fails("23-W04-1")
+	fails("3-W04-1")
+	fails("1234-W4-1")
+	fails("1234-W4-03") // day offset shouldn't be padded
+
+	succeeds("2019-W01-1", 2019, 1, 1)
+	succeeds("2019-W01-2", 2019, 1, 2)
+	succeeds("2019-W01-3", 2019, 1, 3)
+	succeeds("2019-W01-4", 2019, 1, 4)
+	succeeds("2019-W01-5", 2019, 1, 5)
+	succeeds("2019-W01-6", 2019, 1, 6)
+	succeeds("2019-W01-7", 2019, 1, 7)
+
+	succeeds("2019-W02-1", 2019, 2, 1)
+	succeeds("2019-W02-2", 2019, 2, 2)
+	succeeds("2019-W02-3", 2019, 2, 3)
+	succeeds("2019-W02-4", 2019, 2, 4)
+	succeeds("2019-W02-5", 2019, 2, 5)
+	succeeds("2019-W02-6", 2019, 2, 6)
+	succeeds("2019-W02-7", 2019, 2, 7)
+
+	succeeds("2004-W09-1", 2004, 9, 1)
+	succeeds("2004-W09-2", 2004, 9, 2)
+	succeeds("2004-W09-3", 2004, 9, 3)
+	succeeds("2004-W09-4", 2004, 9, 4)
+	succeeds("2004-W09-5", 2004, 9, 5)
+	succeeds("2004-W09-6", 2004, 9, 6)
+	succeeds("2004-W09-7", 2004, 9, 7)
+
+	succeeds("2004-W53-1", 2004, 53, 1)
+	succeeds("2004-W53-2", 2004, 53, 2)
+	succeeds("2004-W53-3", 2004, 53, 3)
+	succeeds("2004-W53-4", 2004, 53, 4)
+	succeeds("2004-W53-5", 2004, 53, 5)
+	succeeds("2004-W53-6", 2004, 53, 6)
+	succeeds("2004-W53-7", 2004, 53, 7)
+}
+
 func (suite *WeekDaySuite) TestParseWeekDayStart() {
 	succeeds := func(input string, year int, month time.Month, day int) {
 		date, err := isodates.ParseWeekDayStart(input)

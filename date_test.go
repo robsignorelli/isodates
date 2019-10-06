@@ -19,11 +19,14 @@ type DateSuite struct {
 
 func (suite DateSuite) TestParseDate() {
 	succeeds := func(input string, year int, month time.Month, day int) {
-		date, err := isodates.ParseDate(input)
-		suite.AssertMidnightUTC(date, err, year, month, day)
+		actualYear, actualMonth, actualDay, err := isodates.ParseDate(input)
+		_ = suite.NoError(err) &&
+			suite.Equal(year, actualYear, "incorrect year") &&
+			suite.Equal(month, actualMonth, "incorrect month") &&
+			suite.Equal(day, actualDay, "incorrect day")
 	}
 	fails := func(input string) {
-		_, err := isodates.ParseDate(input)
+		_, _, _, err := isodates.ParseDate(input)
 		suite.Error(err)
 	}
 	fails("")
@@ -58,9 +61,9 @@ func (suite DateSuite) TestParseDate() {
 	succeeds("2019-01-01", 2019, time.January, 1)
 	succeeds("2319-12-31", 2319, time.December, 31)
 
-	// Roll over to next month
-	succeeds("2005-02-29", 2005, time.March, 1)
-	succeeds("2005-01-33", 2005, time.February, 2)
+	// Don't roll anything over until you feed the values to `time.Date()`
+	succeeds("2005-02-29", 2005, time.February, 29)
+	succeeds("2005-01-33", 2005, time.January, 33)
 }
 
 func (suite *DateSuite) TestParseDateStart() {
@@ -178,18 +181,18 @@ func (suite *DateSuite) TestParseDateEndIn() {
 }
 
 func ExampleParseDate() {
-	date, err := isodates.ParseDate("2019-02-24")
+	year, month, day, err := isodates.ParseDate("2019-02-24")
 	if err != nil {
 		fmt.Printf("oops: %v\n", err)
 	}
-	fmt.Println(date.Format("Jan 2, 2006"))
+	fmt.Printf("Year=%d Month=%d Day=%d", year, month, day)
 
-	// Output: Feb 24, 2019
+	// Output: Year=2019 Month=2 Day=24
 }
 
 // BenchmarkParseDate typically runs about 70-80ns/op on a 2014 MacBook Pro
 func BenchmarkParseDate(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		_, _ = isodates.ParseDate("2019-02-27")
+		_, _, _, _ = isodates.ParseDate("2019-02-27")
 	}
 }
